@@ -1,0 +1,22 @@
+{
+  "name": "snake_game",
+  "version": "1.0.0",
+  "description": "Simple snake game",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bao Tran",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^13.1.0",
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-jshint": "^2.0.1",
+    "gulp-open": "^2.0.0",
+    "jshint": "^2.9.3",
+    "jshint-stylish": "^2.2.1",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
