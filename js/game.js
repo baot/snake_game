@@ -1,4 +1,9 @@
-"use strict"
+"use strict";
+
+var input = require('./input.js');
+var snake = require('./snake.js');
+
+input();
 
 /*
  *  Get the size of window
@@ -24,18 +29,6 @@ canvas.height = screen.h;
 
 var ctx = canvas.getContext("2d");
 
-var snake = {
-    // position
-    x: 1,
-    y: 1,
-    // acceleration
-    dx: 0,
-    dy: 1,
-    // size
-    width: 50,
-    height: 50
-};
-
 var candy = {
     x: Math.floor(Math.random() * canvas.width),
     y: Math.floor(Math.random() * canvas.height)
@@ -58,7 +51,7 @@ var createCandy = function() {
 };
 
 var gameOver = function() {
-    cancelAnimationFrame(id);
+    cancelAnimationFrame(loopId);
     alert("gameOver");
     snake.x = 1;
     snake.y = 1;
@@ -74,8 +67,16 @@ var draw = function() {
     if ((snake.x+snake.width) >= canvas.width || snake.x <= 0 || (snake.y+snake.height) >= canvas.height || snake.y <= 0) {
         gameOver();
     } else {
-        snake.x += snake.dx;
-        snake.y += snake.dy;
+        // checking for direction
+        if (snake.direction === 39) { // right
+            snake.x += snake.dx;
+        } else if (snake.direction === 37) { // left
+            snake.x -= snake.dx;
+        } else if (snake.direction === 40) { // down
+            snake.y += snake.dy;
+        } else if (snake.direction  === 38) { // up
+            snake.y -= snake.dy;
+        }
         loopId = window.requestAnimationFrame(draw);
     }
 };
