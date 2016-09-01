@@ -22,8 +22,6 @@ screen.h = window.innerHeight
  */
 var canvas = document.getElementById("game");
 // Change canvas size to fit window size
-//canvas.setAttribute("width", screen.w);
-//canvas.setAttribute("height", screen.h);
 canvas.width = screen.w;
 canvas.height = screen.h;
 
@@ -31,12 +29,13 @@ var ctx = canvas.getContext("2d");
 
 var candy = {
     x: Math.floor(Math.random() * canvas.width),
-    y: Math.floor(Math.random() * canvas.height)
+    y: Math.floor(Math.random() * canvas.height),
+    radius: 20
 };
 
-var createSnake = function() {
+var drawSnakeNode = function(node) {
     ctx.beginPath();
-    ctx.rect(snake.x, snake.y, snake.width, snake.height);
+    ctx.rect(node.data.x, node.data.y, node.data.width, node.data.height);
     ctx.fillStyle = "black";
     ctx.fill();
     ctx.closePath();
@@ -44,7 +43,7 @@ var createSnake = function() {
 
 var createCandy = function() {
     ctx.beginPath();
-    ctx.arc(candy.x, candy.y, 20, 0, Math.PI*2, false);
+    ctx.arc(candy.x, candy.y, candy.radius, 0, Math.PI*2, false);
     ctx.fillStyle = "red";
     ctx.fill();
     ctx.closePath();
@@ -61,21 +60,24 @@ var loopId;
 
 var draw = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    createSnake();
+    drawSnakeNode(snake._head);
     createCandy();
     // collision detection of snake with wall
-    if ((snake.x+snake.width) >= canvas.width || snake.x <= 0 || (snake.y+snake.height) >= canvas.height || snake.y <= 0) {
+    if ((snake._head.data.x+snake._head.data.width) >= canvas.width || snake._head.data.x <= 0 || (snake._head.data.y+snake._head.data.height) >= canvas.height || snake.y <= 0) {
         gameOver();
     } else {
+        // checking if snake eat 
+        //if (((snake.x+snake.width)>=(candy.x-candy.radius) && (snake.x+snake.width)<=(candy.x+candy.radius)
+
         // checking for direction
         if (snake.direction === 39) { // right
-            snake.x += snake.dx;
+            snake._head.data.x += snake.dx;
         } else if (snake.direction === 37) { // left
-            snake.x -= snake.dx;
+            snake._head.data.x -= snake.dx;
         } else if (snake.direction === 40) { // down
-            snake.y += snake.dy;
+            snake._head.data.y += snake.dy;
         } else if (snake.direction  === 38) { // up
-            snake.y -= snake.dy;
+            snake._head.data.y -= snake.dy;
         }
         loopId = window.requestAnimationFrame(draw);
     }
