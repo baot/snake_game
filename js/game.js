@@ -5,14 +5,6 @@ var Snake = require('./snake.js');
 var Candy = require('./candy.js')
 var config = require('./config.js');
 
-
-var gameOver = function() {
-    cancelAnimationFrame(loopId);
-    alert("gameOver");
-    snake.x = config.nodeSize;
-    snake.y = config.nodeSize;
-};
-
 var data = {
     // position
     x: config.nodeSize,
@@ -23,10 +15,17 @@ var data = {
 
 var snake = new Snake();
 var candy = new Candy();
+
 input(snake);
 snake.add(data);
 
 var loopId;
+var gameOver = function() {
+    cancelAnimationFrame(loopId);
+    alert("gameOver");
+    snake.x = config.nodeSize;
+    snake.y = config.nodeSize;
+};
 
 var draw = function() {
     candy.draw();
@@ -38,25 +37,25 @@ var draw = function() {
     } else {
         snake.remove();
         // checking for direction & add head
-        if (snake.direction == 39) { // right
+        if (snake.direction === 39) { // right
             snake.add({
                 x: headData.x + config.nodeSize,
                 y: headData.y,
                 size: config.nodeSize
             });
-        } else if (snake.direction == 37) { // left
+        } else if (snake.direction === 37) { // left
             snake.add({
                 x: headData.x - config.nodeSize,
                 y: headData.y,
                 size: config.nodeSize
             });
-        } else if (snake.direction == 40) { // down
+        } else if (snake.direction === 40) { // down
             snake.add({
                 x: headData.x,
                 y: headData.y + config.nodeSize,
                 size: config.nodeSize
             });
-        } else if (snake.direction  == 38) { // up
+        } else if (snake.direction === 38) { // up
             snake.add({
                 x: headData.x,
                 y: headData.y - config.nodeSize,
@@ -69,25 +68,25 @@ var draw = function() {
             console.log("eat");
 
             var newHead = {};
-            if (snake.direction == 39) { // right
+            if (snake.direction === 39) { // right
                 newHead = {
                     x: candy.x + config.nodeSize,
                     y: candy.y,
                     size: config.nodeSize
                 };
-            } else if (snake.direction == 37) { // left
+            } else if (snake.direction === 37) { // left
                 newHead = {
                     x: candy.x - config.nodeSize,
                     y: candy.y,
                     size: config.nodeSize
                 };
-            } else if (snake.direction == 40) { // down
+            } else if (snake.direction === 40) { // down
                 newHead = {
                     x: candy.x,
                     y: candy.y + config.nodeSize,
                     size: config.nodeSize
                 };
-            } else if (snake.direction  == 38) { // up
+            } else if (snake.direction === 38) { // up
                 newHead = {
                     x: candy.x ,
                     y: candy.y - config.nodeSize,

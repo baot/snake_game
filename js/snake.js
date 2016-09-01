@@ -41,7 +41,7 @@ Snake.prototype.add = function(data) {
 Snake.prototype.remove = function() {
     // clear the tail 
     ctx.clearRect(this.tail.data.x, this.tail.data.y, this.tail.data.size , this.tail.data.size);
-    if (this.length == 1) {
+    if (this.length === 1) {
         this.tail = null;
         this.head = null;
         this.length = 0;

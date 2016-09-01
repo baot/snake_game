@@ -1,38 +1,14 @@
 "use strict";
 
 module.exports = function(snake) {
-    var rightPressed = false;
-    var leftPressed = false;
-    var upPressed = false;
-    var downPressed = false;
+    var keyDownHandler = function(e) {
+        if (!(e.keyCode === 39 && snake.direction === 37) && !(e.keyCode === 37 && snake.direction === 39) &&
+            !(e.keyCode === 40 && snake.direction === 38) && !(e.keyCode === 38 && snake.direction === 40)) {
+            snake.direction = e.keyCode;
+        }
+    };
 
     document.addEventListener("keydown", keyDownHandler);
-    document.addEventListener("keyup", keyUpHandler);
-
-    function keyDownHandler(e) {
-        if (e.keyCode === 39) { // right
-            rightPressed = true;
-        } else if (e.keyCode === 37) { // left
-            leftPressed = true;
-        } else if (e.keyCode === 40) { // down
-            downPressed = true;
-        } else if (e.keyCode === 38) { // up
-            upPressed = true;
-        }
-        snake.direction = e.keyCode;
-    }
-
-    function keyUpHandler(e) {
-        if (e.keyCode === 39) { // right
-            rightPressed = false;
-        } else if (e.keyCode === 37) { // left
-            leftPressed = false;
-        } else if (e.keyCode === 40) { // down
-            downPressed = false;
-        } else if (e.keyCode === 38) { // up
-            upPressed = false;
-        }
-    }
 };
 
 
