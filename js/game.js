@@ -1,83 +1,103 @@
 "use strict";
 
 var input = require('./input.js');
-var snake = require('./snake.js');
+var Snake = require('./snake.js');
+var Candy = require('./candy.js')
+var config = require('./config.js');
 
-input();
-
-/*
- *  Get the size of window
- */
-var screen = {};
-
-screen.w = window.innerWidth
-    || document.documentElement.clientWidth
-    || document.body.clientWidth;
-screen.h = window.innerHeight
-    || document.documentElement.clientHeight
-    || document.body.clientHeight;
-
-/*
- *  Start our canvas drawing
- */
-var canvas = document.getElementById("game");
-// Change canvas size to fit window size
-canvas.width = screen.w;
-canvas.height = screen.h;
-
-var ctx = canvas.getContext("2d");
-
-var candy = {
-    x: Math.floor(Math.random() * canvas.width),
-    y: Math.floor(Math.random() * canvas.height),
-    radius: 20
-};
-
-var drawSnakeNode = function(node) {
-    ctx.beginPath();
-    ctx.rect(node.data.x, node.data.y, node.data.width, node.data.height);
-    ctx.fillStyle = "black";
-    ctx.fill();
-    ctx.closePath();
-};
-
-var createCandy = function() {
-    ctx.beginPath();
-    ctx.arc(candy.x, candy.y, candy.radius, 0, Math.PI*2, false);
-    ctx.fillStyle = "red";
-    ctx.fill();
-    ctx.closePath();
-};
 
 var gameOver = function() {
     cancelAnimationFrame(loopId);
     alert("gameOver");
-    snake.x = 1;
-    snake.y = 1;
+    snake.x = config.nodeSize;
+    snake.y = config.nodeSize;
 };
+
+var data = {
+    // position
+    x: config.nodeSize,
+    y: config.nodeSize,
+    // size
+    size: config.nodeSize
+};
+
+var snake = new Snake();
+var candy = new Candy();
+input(snake);
+snake.add(data);
 
 var loopId;
 
 var draw = function() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawSnakeNode(snake._head);
-    createCandy();
-    // collision detection of snake with wall
-    if ((snake._head.data.x+snake._head.data.width) >= canvas.width || snake._head.data.x <= 0 || (snake._head.data.y+snake._head.data.height) >= canvas.height || snake.y <= 0) {
+    candy.draw();
+    var headData = snake.head.data; 
+    // collision detection of snake head with wall
+    if ((headData.x+snake.head.data.size) >= config.screenWidth || snake.head.data.x <= 0 || 
+        (snake.head.data.y+snake.head.data.size) >= config.screenHeight || snake.head.data.y <= 0) {
         gameOver();
     } else {
-        // checking if snake eat 
-        //if (((snake.x+snake.width)>=(candy.x-candy.radius) && (snake.x+snake.width)<=(candy.x+candy.radius)
+        snake.remove();
+        // checking for direction & add head
+        if (snake.direction == 39) { // right
+            snake.add({
+                x: headData.x + config.nodeSize,
+                y: headData.y,
+                size: config.nodeSize
+            });
+        } else if (snake.direction == 37) { // left
+            snake.add({
+                x: headData.x - config.nodeSize,
+                y: headData.y,
+                size: config.nodeSize
+            });
+        } else if (snake.direction == 40) { // down
+            snake.add({
+                x: headData.x,
+                y: headData.y + config.nodeSize,
+                size: config.nodeSize
+            });
+        } else if (snake.direction  == 38) { // up
+            snake.add({
+                x: headData.x,
+                y: headData.y - config.nodeSize,
+                size: config.nodeSize
+            });
+        }
+        // checking if snake head eat 
+        if ((headData.x>(candy.x-config.nodeSize) && headData.x<(candy.x+config.nodeSize) && headData.y===candy.y) ||
+            (headData.y>(candy.y-config.nodeSize) && headData.y<(candy.y+config.nodeSize) && headData.x===candy.x)) {
+            console.log("eat");
 
-        // checking for direction
-        if (snake.direction === 39) { // right
-            snake._head.data.x += snake.dx;
-        } else if (snake.direction === 37) { // left
-            snake._head.data.x -= snake.dx;
-        } else if (snake.direction === 40) { // down
-            snake._head.data.y += snake.dy;
-        } else if (snake.direction  === 38) { // up
-            snake._head.data.y -= snake.dy;
+            var newHead = {};
+            if (snake.direction == 39) { // right
+                newHead = {
+                    x: candy.x + config.nodeSize,
+                    y: candy.y,
+                    size: config.nodeSize
+                };
+            } else if (snake.direction == 37) { // left
+                newHead = {
+                    x: candy.x - config.nodeSize,
+                    y: candy.y,
+                    size: config.nodeSize
+                };
+            } else if (snake.direction == 40) { // down
+                newHead = {
+                    x: candy.x,
+                    y: candy.y + config.nodeSize,
+                    size: config.nodeSize
+                };
+            } else if (snake.direction  == 38) { // up
+                newHead = {
+                    x: candy.x ,
+                    y: candy.y - config.nodeSize,
+                    size: config.nodeSize
+                };
+            }
+            // add new head
+            snake.add(newHead);
+            candy.remove();
+            candy = new Candy();
         }
         loopId = window.requestAnimationFrame(draw);
     }

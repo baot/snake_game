@@ -1,8 +1,6 @@
 "use strict";
 
-var snake = require('./snake.js');
-
-module.exports = function() {
+module.exports = function(snake) {
     var rightPressed = false;
     var leftPressed = false;
     var upPressed = false;
