@@ -5,6 +5,7 @@ var jshint = require('gulp-jshint');
 var connect = require('gulp-connect');
 var open = require('gulp-open');
 var browserify = require('browserify');
+var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 
 var config = {
@@ -14,7 +15,7 @@ var config = {
         root: './',
         dist: './dist',
         js:'./js/*.js',
-        gameJs: './js/game.js'
+        index: './js/index.js'
     }
 };
 
@@ -36,7 +37,8 @@ gulp.task('open', ['connect'], function() {
 
 // js files bundle
 gulp.task('js-bundle', function() {
-    browserify(config.paths.gameJs)
+    browserify(config.paths.index)
+        .transform(babelify, { presets: ['es2015'] })
         .bundle()
         .on('error', console.error.bind(console))
         .pipe(source('bundle.js'))

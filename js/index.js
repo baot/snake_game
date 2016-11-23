@@ -1,9 +1,7 @@
-"use strict";
-
-var input = require('./input.js');
-var Snake = require('./snake.js');
-var Candy = require('./candy.js')
-var config = require('./config.js');
+import input from './input';
+import Snake from './snake';
+import Candy from './candy';
+import config from './config';
 
 var data = {
     // position
@@ -29,9 +27,9 @@ var gameOver = function() {
 
 var draw = function() {
     candy.draw();
-    var headData = snake.head.data; 
+    var headData = snake.head.data;
     // collision detection of snake head with wall
-    if ((headData.x+snake.head.data.size) >= config.screenWidth || snake.head.data.x <= 0 || 
+    if ((headData.x+snake.head.data.size) >= config.screenWidth || snake.head.data.x <= 0 ||
         (snake.head.data.y+snake.head.data.size) >= config.screenHeight || snake.head.data.y <= 0) {
         gameOver();
     } else {
@@ -62,7 +60,7 @@ var draw = function() {
                 size: config.nodeSize
             });
         }
-        // checking if snake head eat 
+        // checking if snake head eat
         if ((headData.x>(candy.x-config.nodeSize) && headData.x<(candy.x+config.nodeSize) && headData.y===candy.y) ||
             (headData.y>(candy.y-config.nodeSize) && headData.y<(candy.y+config.nodeSize) && headData.x===candy.x)) {
             console.log("eat");
