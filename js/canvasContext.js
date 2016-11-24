@@ -1,12 +1,10 @@
-"use strict";
+import { screenConfig } from './config';
 
-var config = require("./config.js");
-
-var canvas = document.getElementById("game");
+const canvas = document.getElementById("game");
 // Change canvas size to fit window size
-canvas.width = config.screenWidth;
-canvas.height = config.screenHeight;
+canvas.width = screenConfig.width;
+canvas.height = screenConfig.height;
 
-var ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 
-module.exports = ctx;
+export default ctx
