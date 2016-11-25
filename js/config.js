@@ -1,21 +1,8 @@
-/* ----- Get size of browser ----- */
+/* Get size of browser */
 const screenInfo = {
   w: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
   h: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
 };
-
-/* ----- Calculate Grid System ----- */
-const grid = {};
-
-if (screenInfo.w > screenInfo.h) {
-    grid.heightNums = 64;
-    grid.widthNums = Math.floor(screenInfo.w/(screenInfo.h/grid.heightNums));
-} else {
-    // TODO?
-}
-
-/* ----- Calculate Node Size For Candy Size & Snake Node Size ----- */
-const nodeSize = screenInfo.h/grid.heightNums;
 
 /* ----- Screen Config ----- */
 export const screenConfig = {
@@ -23,10 +10,14 @@ export const screenConfig = {
     height: screenInfo.h
 };
 
+/* ----- Grid Config ----- */
 export const gridConfig = {
-    width: grid.widthNums,
-    height: grid.heightNums
+  height: 64,
+  width: Math.floor(screenInfo.w/(screenInfo.h/64))
 };
+
+/* Calculate Node Size For Candy Size & Snake Node Size */
+const nodeSize = screenInfo.h/gridConfig.height;
 
 /* ----- Candy Config ----- */
 export const candyConfig = {
