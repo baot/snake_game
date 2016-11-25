@@ -1,5 +1,3 @@
-import Immutable from 'immutable';
-
 /* ----- Get size of browser ----- */
 const screenInfo = {
   w: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
@@ -61,7 +59,7 @@ export const gameConfig = {
     ticker_interval: 60,
     initial_game_state: {
         candy: candyConfig.firstPosition,
-        snake: Immutable.List.of(snakeConfig.firstPosition),
+        snake: [snakeConfig.firstPosition],
         score: 0
     }
 };

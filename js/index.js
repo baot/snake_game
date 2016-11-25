@@ -1,5 +1,5 @@
 import { Scheduler, Observable } from 'rxjs';
-import Immutable from 'immutable';
+import { equals, any, head, prepend, prop, compose, dropLast, flip, last } from 'ramda';
 
 import input from './input';
 import { drawCandy, drawSnake, clearNode } from './draw';
@@ -13,9 +13,17 @@ const snakeWallCollision = function(headPosition, snakeConfig, screenConfig) {
   return ((headPosition.x+snakeConfig.size.width) >= screenConfig.width ||
     (headPosition.x <= 0) || (headPosition.y <= 0) ||
     (headPosition.y+snakeConfig.size.height) >= screenConfig.height);
-}
+};
 
-/* ----- TODO: Collision Detection For Snake Head And Snake Tail ----- */
+/* ----- Collision Detection For Snake Head And Snake Tail ----- */
+const snakeHeadTailCollision = function(headPosition, snake) {
+  const testPosition = {
+    x: prop('x')(headPosition) + compose(prop('x'), head)(snake),
+    y: prop('y')(headPosition) + compose(prop('y'), head)(snake)
+  };
+
+  return any(equals(testPosition))(snake);
+};
 
 /* ----- Checking Snake Eat Candy ----- */
 const eat = function(headPosition, candyPosition, candyConfig) {
@@ -25,7 +33,7 @@ const eat = function(headPosition, candyPosition, candyConfig) {
     (headPosition.y > (candyPosition.y-candyConfig.size.height) &&
     headPosition.y < (candyPosition.y+candyConfig.size.height) &&
     headPosition.x === candyPosition.x));
-}
+};
 
 /* ----- TODO: Better Random ----- */
 export const randomCandyPosition = function() {
@@ -40,7 +48,7 @@ export const randomCandyPosition = function() {
 /* ----- Ticker Observable That Tick For TICKER_INTERVAL ----- */
 const ticker = Observable.interval(gameConfig.ticker_interval, Scheduler.requestAnimationFrame)
 
-/* ----- Snake Head Position Observable ----- */
+/* ----- Snake Head Position Observable . TODO: opposite keydown ----- */
 const snakeHeadPos = ticker.withLatestFrom(input)
     .map(([ticker, direction]) => {
         let x = 0;
@@ -60,7 +68,7 @@ const snakeHeadPos = ticker.withLatestFrom(input)
             y
         };
     })
-    .startWith({x: 0, y: 0});
+    .startWith({x: snakeConfig.size.width, y: 0});
 
 /* ----- Game State Observable ----- */
 
@@ -70,20 +78,24 @@ const gameState = ticker
     // TODO: Have Side Effect
 
     const newHeadPos = {
-      x: snake.last().x + snakeHeadPos.x,
-      y: snake.last().y + snakeHeadPos.y
+      x: compose(prop('x'), head)(snake) + prop('x')(snakeHeadPos),
+      y: compose(prop('y'), head)(snake) + prop('y')(snakeHeadPos)
     };
 
-    let newSnakeState = (snake.size > 1) ? snake.shift().push(newHeadPos) : snake.push(newHeadPos);
+    let newSnakeState = ((snake.length > 1) ?
+      compose(prepend(newHeadPos), dropLast(1))(snake) :
+      prepend(newHeadPos)(snake));
 
     if (eat(newHeadPos, candy, candyConfig)) {
-      newSnakeState = newSnakeState.push({
-        x: newSnakeState.last().x + snakeHeadPos.x,
-        y: newSnakeState.last().y + snakeHeadPos.y
+      newSnakeState = flip(prepend)(newSnakeState)({
+        x: compose(prop('x'), head)(newSnakeState) + prop('x')(snakeHeadPos),
+        y: compose(prop('y'), head)(newSnakeState) + prop('y')(snakeHeadPos)
       });
       candy = randomCandyPosition();
     }
-    if (snakeWallCollision(snake.last(), snakeConfig, screenConfig)) {
+
+    if (snakeWallCollision(head(snake), snakeConfig, screenConfig) ||
+        snakeHeadTailCollision(snakeHeadPos, snake)) {
       // indicate game over
       alert("game Over");
       return null;
@@ -97,13 +109,19 @@ const gameState = ticker
   }, gameConfig.initial_game_state);
 
 const update = function(state) {
-  clearNode(snakeConfig, state.snake.first());
-  drawSnake(state.snake.last());
+  clearNode(snakeConfig, last(state.snake));
+  drawSnake(head(state.snake));
   drawCandy(state.candy);
 }
+
+gameState.subscribe(x => {
+  clearNode(snakeConfig, last(x.snake));
+  drawSnake(head(x.snake));
+  drawCandy(x.candy);
+});
 
 /* ----- BOOSTRAP GAME ----- */
 drawCandy(candyConfig.firstPosition);
 drawSnake(snakeConfig.firstPosition);
 
-const game = gameState.subscribe(update);
+//const game = gameState.subscribe(update);
