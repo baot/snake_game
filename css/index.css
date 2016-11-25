@@ -4,3 +4,8 @@ body
     padding: 0;
     overflow: hidden;
 }
+
+/* ----- CANVAS ----- */
+canvas#game {
+  border: 1px solid red;
+}

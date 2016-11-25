@@ -1,14 +1,18 @@
-"use strict";
+import { Observable } from 'rxjs';
+import { contains } from 'ramda';
 
-module.exports = function(snake) {
-    var keyDownHandler = function(e) {
-        if (!(e.keyCode === 39 && snake.direction === 37) && !(e.keyCode === 37 && snake.direction === 39) &&
-            !(e.keyCode === 40 && snake.direction === 38) && !(e.keyCode === 38 && snake.direction === 40)) {
-            snake.direction = e.keyCode;
-        }
-    };
+const keyCode = [
+  37,   // left arrow
+  38,   // up arrow
+  39,   // right arrow
+  40,   // down arrow
+];
 
-    document.addEventListener("keydown", keyDownHandler);
-};
+/* ----- Input Observable ----- */
+const input = Observable.fromEvent(document, 'keydown')
+  .filter((e) => {
+    return contains(e.keyCode, keyCode);
+  })
+  .map(e => e.keyCode);
 
-
+export default input;
