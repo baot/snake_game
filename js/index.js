@@ -50,28 +50,29 @@ const ticker = Observable.interval(gameConfig.ticker_interval, Scheduler.request
 
 /* ----- Snake Head Position Observable . TODO: opposite keydown ----- */
 const snakeHeadPos = ticker.withLatestFrom(input)
-    .map(([ticker, direction]) => {
-        let x = 0;
-        let y = 0;
-        if (direction === 37) {
-            x = x - snakeConfig.size.width;
-        } else if (direction === 38) {
-            y = y - snakeConfig.size.height;
-        } else if (direction === 39) {
-            x = x + snakeConfig.size.width;
-        } else if (direction === 40) {
-            y = y + snakeConfig.size.height;
-        }
+  .scan(({x, y}, [ticker, direction]) => {
+    let newX = 0;
+    let newY = 0;
+    if (x !== snakeConfig.size.width && direction === 37) {
+      newX = -snakeConfig.size.width;
+    } else if (y !== snakeConfig.size.height && direction === 38) {
+      newY = -snakeConfig.size.height;
+    } else if (x !== -snakeConfig.size.width && direction === 39) {
+      newX = snakeConfig.size.width;
+    } else if (y !== -snakeConfig.size.height && direction === 40) {
+      newY = snakeConfig.size.height;
+    } else {
+      newX = x;
+      newY = y;
+    }
 
-        return {
-            x,
-            y
-        };
-    })
-    .startWith({x: snakeConfig.size.width, y: 0});
+    return {
+      x: newX,
+      y: newY
+    };
+  }, {x: snakeConfig.size.width, y: 0});
 
 /* ----- Game State Observable ----- */
-
 const gameState = ticker
   .withLatestFrom(snakeHeadPos)
   .scan(({candy, snake, score}, [ticker, snakeHeadPos]) => {
