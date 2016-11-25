@@ -48,7 +48,7 @@ export const randomCandyPosition = function() {
 /* ----- Ticker Observable That Tick For TICKER_INTERVAL ----- */
 const ticker = Observable.interval(gameConfig.ticker_interval, Scheduler.requestAnimationFrame)
 
-/* ----- Snake Head Position Observable . TODO: opposite keydown ----- */
+/* ----- Snake Head Position Observable ----- */
 const snakeHeadPos = ticker.withLatestFrom(input)
   .scan(({x, y}, [ticker, direction]) => {
     let newX = 0;
@@ -76,7 +76,7 @@ const snakeHeadPos = ticker.withLatestFrom(input)
 const gameState = ticker
   .withLatestFrom(snakeHeadPos)
   .scan(({candy, snake, score}, [ticker, snakeHeadPos]) => {
-    // TODO: Have Side Effect
+    // TODO: Move Side Effect Out
 
     const newHeadPos = {
       x: compose(prop('x'), head)(snake) + prop('x')(snakeHeadPos),
@@ -109,20 +109,15 @@ const gameState = ticker
     };
   }, gameConfig.initial_game_state);
 
+/* ----- Game Observer Method ----- */
 const update = function(state) {
   clearNode(snakeConfig, last(state.snake));
   drawSnake(head(state.snake));
   drawCandy(state.candy);
 }
 
-gameState.subscribe(x => {
-  clearNode(snakeConfig, last(x.snake));
-  drawSnake(head(x.snake));
-  drawCandy(x.candy);
-});
-
 /* ----- BOOSTRAP GAME ----- */
 drawCandy(candyConfig.firstPosition);
 drawSnake(snakeConfig.firstPosition);
 
-//const game = gameState.subscribe(update);
+const game = gameState.subscribe(update);
