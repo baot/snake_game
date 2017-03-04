@@ -1,5 +1,5 @@
 # snake_game
-simple snake game
+snake game with ramda and rxjs
 
 #### Run
 * npm start
